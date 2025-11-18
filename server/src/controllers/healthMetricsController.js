@@ -9,7 +9,6 @@ exports.getHealthMetrics = async (req, res, next) => {
     
     let query = { user: req.user.id };
     
-    // Date range filter
     if (startDate && endDate) {
       query.date = {
         $gte: new Date(startDate),
@@ -19,7 +18,6 @@ exports.getHealthMetrics = async (req, res, next) => {
     
     let metricsQuery = HealthMetrics.find(query).sort({ date: -1 });
     
-    // Limit results if specified
     if (limit) {
       metricsQuery = metricsQuery.limit(parseInt(limit));
     }
@@ -153,7 +151,6 @@ exports.getHealthTrends = async (req, res, next) => {
     
     const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
-    // Weight trends
     const weightTrends = await HealthMetrics.find({
       user: req.user.id,
       date: { $gte: startDate },
@@ -162,7 +159,6 @@ exports.getHealthTrends = async (req, res, next) => {
     .sort({ date: 1 })
     .select('date weight -_id');
 
-    // BMI trends
     const bmiTrends = await HealthMetrics.find({
       user: req.user.id,
       date: { $gte: startDate },
@@ -171,7 +167,6 @@ exports.getHealthTrends = async (req, res, next) => {
     .sort({ date: 1 })
     .select('date bmi -_id');
 
-    // Sleep trends
     const sleepTrends = await HealthMetrics.find({
       user: req.user.id,
       date: { $gte: startDate },
@@ -180,7 +175,6 @@ exports.getHealthTrends = async (req, res, next) => {
     .sort({ date: 1 })
     .select('date sleepDuration -_id');
 
-    // Latest metrics
     const latestMetrics = await HealthMetrics.findOne({
       user: req.user.id
     })

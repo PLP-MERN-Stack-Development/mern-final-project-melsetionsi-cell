@@ -1,7 +1,7 @@
 {
   "name": "mern-final-project-melsetionsi-cell",
   "version": "1.0.0",
-  "description": "This assignment focuses on designing, developing, and deploying a comprehensive full-stack MERN application that showcases all the skills you've learned throughout the course.",
+  "description": "cat > README.md << 'EOF'\r # Health & Fitness Tracker",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

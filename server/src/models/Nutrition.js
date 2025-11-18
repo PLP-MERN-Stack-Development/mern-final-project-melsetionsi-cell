@@ -41,12 +41,14 @@ const nutritionSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',
-    required: true
+    required: true,
+    index: true
   },
   mealType: {
     type: String,
     required: true,
-    enum: ['breakfast', 'lunch', 'dinner', 'snack']
+    enum: ['breakfast', 'lunch', 'dinner', 'snack'],
+    index: true
   },
   foodItems: [foodItemSchema],
   totalCalories: {
@@ -67,19 +69,25 @@ const nutritionSchema = new mongoose.Schema({
   },
   date: {
     type: Date,
-    default: Date.now
+    default: Date.now,
+    index: true
   },
   notes: String
 }, {
   timestamps: true
 });
 
+// Indexes for better query performance
+nutritionSchema.index({ user: 1, date: -1 });
+nutritionSchema.index({ mealType: 1 });
+nutritionSchema.index({ user: 1, mealType: 1 });
+
 // Calculate totals before saving
 nutritionSchema.pre('save', function(next) {
-  this.totalCalories = this.foodItems.reduce((total, item) => total + item.calories, 0);
-  this.totalProtein = this.foodItems.reduce((total, item) => total + item.protein, 0);
-  this.totalCarbs = this.foodItems.reduce((total, item) => total + item.carbs, 0);
-  this.totalFat = this.foodItems.reduce((total, item) => total + item.fat, 0);
+  this.totalCalories = this.foodItems.reduce((total, item) => total + (item.calories * item.quantity), 0);
+  this.totalProtein = this.foodItems.reduce((total, item) => total + (item.protein * item.quantity), 0);
+  this.totalCarbs = this.foodItems.reduce((total, item) => total + (item.carbs * item.quantity), 0);
+  this.totalFat = this.foodItems.reduce((total, item) => total + (item.fat * item.quantity), 0);
   next();
 });
 

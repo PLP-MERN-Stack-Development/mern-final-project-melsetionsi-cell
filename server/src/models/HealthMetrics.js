@@ -4,7 +4,8 @@ const healthMetricsSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.ObjectId,
     ref: 'User',
-    required: true
+    required: true,
+    index: true
   },
   weight: {
     type: Number,
@@ -33,7 +34,7 @@ const healthMetricsSchema = new mongoose.Schema({
     }
   },
   sleepDuration: {
-    type: Number, // in hours
+    type: Number,
     min: 0,
     max: 24
   },
@@ -42,21 +43,25 @@ const healthMetricsSchema = new mongoose.Schema({
     min: 0
   },
   waterIntake: {
-    type: Number, // in liters
+    type: Number,
     min: 0
   },
   date: {
     type: Date,
-    default: Date.now
+    default: Date.now,
+    index: true
   }
 }, {
   timestamps: true
 });
 
+// Indexes for better query performance
+healthMetricsSchema.index({ user: 1, date: -1 });
+healthMetricsSchema.index({ user: 1 });
+
 // Calculate BMI before saving
 healthMetricsSchema.pre('save', function(next) {
   if (this.weight && this.height) {
-    // Convert height from cm to meters and calculate BMI
     const heightInMeters = this.height / 100;
     this.bmi = this.weight / (heightInMeters * heightInMeters);
     this.bmi = parseFloat(this.bmi.toFixed(2));

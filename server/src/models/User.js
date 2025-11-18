@@ -8,7 +8,8 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Please provide a username'],
     unique: true,
     trim: true,
-    minlength: [3, 'Username must be at least 3 characters long']
+    minlength: [3, 'Username must be at least 3 characters long'],
+    index: true
   },
   email: {
     type: String,
@@ -18,7 +19,8 @@ const userSchema = new mongoose.Schema({
     match: [
       /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
       'Please provide a valid email'
-    ]
+    ],
+    index: true
   },
   password: {
     type: String,
@@ -34,15 +36,23 @@ const userSchema = new mongoose.Schema({
       type: String,
       enum: ['male', 'female', 'other']
     },
-    height: Number, // in cm
-    weight: Number, // in kg
+    height: Number,
+    weight: Number,
     fitnessGoals: [String]
   },
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
+    index: true
   }
+}, {
+  timestamps: true
 });
+
+// Index for better query performance
+userSchema.index({ email: 1 });
+userSchema.index({ username: 1 });
+userSchema.index({ createdAt: -1 });
 
 // Hash password before saving
 userSchema.pre('save', async function(next) {

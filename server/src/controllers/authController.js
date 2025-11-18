@@ -27,7 +27,6 @@ exports.register = async (req, res, next) => {
       profile
     });
 
-    // Create token
     const token = user.getSignedJwtToken();
 
     res.status(201).json({
@@ -53,7 +52,6 @@ exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    // Validate email & password
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -61,7 +59,6 @@ exports.login = async (req, res, next) => {
       });
     }
 
-    // Check for user (include password for verification)
     const user = await User.findOne({ email }).select('+password');
 
     if (!user) {
@@ -71,7 +68,6 @@ exports.login = async (req, res, next) => {
       });
     }
 
-    // Check if password matches
     const isMatch = await user.matchPassword(password);
 
     if (!isMatch) {
@@ -81,7 +77,6 @@ exports.login = async (req, res, next) => {
       });
     }
 
-    // Create token
     const token = user.getSignedJwtToken();
 
     res.status(200).json({

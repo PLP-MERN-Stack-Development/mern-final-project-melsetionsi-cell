@@ -9,7 +9,6 @@ exports.getNutritionEntries = async (req, res, next) => {
     
     let query = { user: req.user.id };
     
-    // Filter by date if provided
     if (date) {
       const startDate = new Date(date);
       const endDate = new Date(date);
@@ -21,7 +20,6 @@ exports.getNutritionEntries = async (req, res, next) => {
       };
     }
     
-    // Filter by meal type if provided
     if (mealType) {
       query.mealType = mealType;
     }
